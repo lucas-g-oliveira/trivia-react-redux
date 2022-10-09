@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import fetchTokenLogin from '../API/fetchApi';
 
 export default class Login extends Component {
   state = {
@@ -11,6 +12,11 @@ export default class Login extends Component {
     this.setState({
       [name]: value,
     }, () => { this.validation(); });
+  };
+
+  handelClick = (e) => {
+    e.preventDefault();
+    fetchTokenLogin();
   };
 
   validation = () => {
@@ -57,6 +63,7 @@ export default class Login extends Component {
           type="submit"
           data-testid="btn-play"
           disabled={ isDisabledBttn }
+          onClick={ this.handelClick }
         >
           Play
         </button>
