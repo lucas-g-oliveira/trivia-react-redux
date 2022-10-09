@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ButtonsSettings } from '../components/ButtonsSettings';
+import PropTypes from 'prop-types';
 
 export default class Login extends Component {
   state = {
@@ -26,6 +26,16 @@ export default class Login extends Component {
     return this.setState({
       isDisabledBttn: true,
     });
+  };
+
+  handleClick = () => {
+    const { history } = this.props;
+    history.push('/');
+  };
+
+  handleClickSettings = () => {
+    const { history } = this.props;
+    history.push('/settings');
   };
 
   render() {
@@ -58,11 +68,26 @@ export default class Login extends Component {
           type="submit"
           data-testid="btn-play"
           disabled={ isDisabledBttn }
+          onClick={ this.handleClick }
         >
           Play
         </button>
-        <ButtonsSettings />
+        <div>
+          <button
+            type="button"
+            data-testid="btn-settings"
+            onClick={ this.handleClickSettings }
+          >
+            Configurações
+          </button>
+        </div>
       </form>
     );
   }
 }
+
+Login.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }).isRequired,
+};
