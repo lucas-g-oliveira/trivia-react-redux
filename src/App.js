@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 /* import logo from './trivia.png'; */
 import './App.css';
+import Game from './pages/Game';
 import Login from './pages/Login';
 import { Settings } from './pages/Settings';
 
@@ -15,7 +16,8 @@ export default class App extends Component {
         </header> */}
         <Switch>
           <Route exact path="/" component={ Login } />
-          <Route path="/settings" component={ Settings } />
+          <Route exact path="/settings" component={ Settings } />
+          <Route exact path="/game" component={ Game } />
         </Switch>
       </main>
     );

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import fetchTokenLogin from '../API/fetchApi';
 
 export default class Login extends Component {
   state = {
@@ -14,6 +15,14 @@ export default class Login extends Component {
     }, () => { this.validation(); });
   };
 
+  handelClick = async (e) => {
+    e.preventDefault();
+    const { history } = this.props;
+    const token = await fetchTokenLogin();
+    localStorage.setItem('token', token.token);
+    history.push('/game');
+  };
+
   validation = () => {
     const { name, email } = this.state;
     const MIN_LENGTH = 0;
@@ -26,11 +35,6 @@ export default class Login extends Component {
     return this.setState({
       isDisabledBttn: true,
     });
-  };
-
-  handleClick = () => {
-    const { history } = this.props;
-    history.push('/');
   };
 
   handleClickSettings = () => {
@@ -68,7 +72,7 @@ export default class Login extends Component {
           type="submit"
           data-testid="btn-play"
           disabled={ isDisabledBttn }
-          onClick={ this.handleClick }
+          onClick={ this.handelClick }
         >
           Play
         </button>
