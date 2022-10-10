@@ -2,7 +2,7 @@ import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { screen, waitFor } from '@testing-library/react';
 import App from '../App';
-import renderWithRouterAndRedux from '../helpers/renderWithRouterAndRedux';
+import renderWithRouterAndRedux from './helpers/renderWithRouterAndRedux';
 
 describe('Testa o componente Login',()=>{
   it('Verifica se exite os inputs com os test-ids requeridos.', () => {
