@@ -15,11 +15,12 @@ export default class Login extends Component {
     }, () => { this.validation(); });
   };
 
-  handelClick = (e) => {
+  handelClick = async (e) => {
     e.preventDefault();
     const { history } = this.props;
-    fetchTokenLogin();
-    history.push('/');
+    const token = await fetchTokenLogin();
+    localStorage.setItem('token', token.token);
+    history.push('/game');
   };
 
   validation = () => {
