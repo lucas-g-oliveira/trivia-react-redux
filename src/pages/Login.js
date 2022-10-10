@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
-<<<<<<< HEAD
 import PropTypes from 'prop-types';
-=======
 import fetchTokenLogin from '../API/fetchApi';
->>>>>>> main-group-15-requisito-02
 
 export default class Login extends Component {
   state = {
@@ -20,7 +17,9 @@ export default class Login extends Component {
 
   handelClick = (e) => {
     e.preventDefault();
+    const { history } = this.props;
     fetchTokenLogin();
+    history.push('/');
   };
 
   validation = () => {
@@ -35,11 +34,6 @@ export default class Login extends Component {
     return this.setState({
       isDisabledBttn: true,
     });
-  };
-
-  handleClick = () => {
-    const { history } = this.props;
-    history.push('/');
   };
 
   handleClickSettings = () => {
@@ -78,11 +72,6 @@ export default class Login extends Component {
           data-testid="btn-play"
           disabled={ isDisabledBttn }
           onClick={ this.handelClick }
-<<<<<<< HEAD
-          onClick={ this.handleClick }
-=======
-          onClick={ this.handelClick }
->>>>>>> main-group-15-requisito-02
         >
           Play
         </button>
