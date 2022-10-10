@@ -1,13 +1,17 @@
-export const LOGIN = 'LOGIN';
+import { LOGIN } from '../actions';
+
 const initialState = {
   email: '',
-  nome: '',
+  name: '',
 };
 
 function user(state = initialState, action) {
   switch (action.type) {
   case LOGIN:
-    return action.value;
+    return {
+      ...state,
+      ...action.payload,
+    };
   default:
     return state;
   }
