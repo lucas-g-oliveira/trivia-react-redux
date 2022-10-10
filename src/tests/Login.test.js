@@ -1,12 +1,12 @@
 import React from 'react';
 import userEvent from '@testing-library/user-event';
-import { render, screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import App from '../App';
+import renderWithRouterAndRedux from '../helpers/renderWithRouterAndRedux';
 
 describe('Testa o componente Login',()=>{
-  beforeEach(() => render(<App />))
-
   it('Verifica se exite os inputs com os test-ids requeridos.', () => {
+    renderWithRouterAndRedux(<App/>)
     const inputName = screen.getByTestId('input-player-name');
     const inputEmail = screen.getByTestId('input-gravatar-email');
     const btnPlay = screen.getByTestId('btn-play');
@@ -16,7 +16,8 @@ describe('Testa o componente Login',()=>{
     expect(btnPlay).toBeInTheDocument()
   })
 
-  it('Verifica se é possível digitar o nome da pessoa e email',()=>{
+  it('Verifica se é possível digitar o nome da pessoa e email',() => {
+    renderWithRouterAndRedux(<App/>)
     const inputName = screen.getByTestId('input-player-name');
     const inputEmail = screen.getByTestId('input-gravatar-email');
 
@@ -27,7 +28,8 @@ describe('Testa o componente Login',()=>{
     expect(inputEmail).toHaveValue('testEmail123')
   })
 
-  it('Verifica se a validação do botão "Play" funciona conforme o esperado',()=>{
+  it('Verifica se a validação do botão "Play" funciona conforme o esperado',() => {
+    renderWithRouterAndRedux(<App/>)
     const inputName = screen.getByTestId('input-player-name');
     const inputEmail = screen.getByTestId('input-gravatar-email');
     const btnPlay = screen.getByTestId('btn-play');
@@ -47,4 +49,27 @@ describe('Testa o componente Login',()=>{
 
     expect(btnPlay).toHaveProperty('disabled',false);
   })
+
+  it('Verifica se o botão "Pay" redireciona para pagina "/game"', async () => {
+    const { history } = renderWithRouterAndRedux(<App/>)
+    const inputName = screen.getByTestId('input-player-name');
+    const inputEmail = screen.getByTestId('input-gravatar-email');
+    const btnPlay = screen.getByTestId('btn-play');
+
+    userEvent.type(inputEmail,'teste@teste.com');
+    userEvent.type(inputName, 'Joãozinho');
+    userEvent.click(btnPlay)
+
+    await waitFor(() => expect(history.location.pathname).toEqual('/game'))
+  })
+
+  it('Verifica se o botão "configurações" redireciona para pagina "/settings"', async () => {
+    const { history } = renderWithRouterAndRedux(<App/>)
+    const btnSettings = screen.getByTestId('btn-settings');
+    
+    userEvent.click(btnSettings)
+
+    expect(history.location.pathname).toEqual('/settings')
+  })
+
 })
