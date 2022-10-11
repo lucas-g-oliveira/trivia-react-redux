@@ -1,8 +1,13 @@
 export const fetchTokenLogin = async () => {
-  const URL = 'https://opentdb.com/api_token.php?command=request';
-  const myRequest = await fetch(URL);
-  const data = await myRequest.json();
-  return data;
+  try {
+    const URL = 'https://opentdb.com/api_token.php?command=request';
+    const myRequest = await fetch(URL);
+    const data = await myRequest.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    return error('INVALID_TOKEN');
+  }
 };
 
 export const fetchQuestions = async (token) => {
@@ -12,6 +17,6 @@ export const fetchQuestions = async (token) => {
     const data = await myRequest.json();
     return data;
   } catch (error) {
-    return error('token invalido');
+    return error('requisição das perguntas falhou');
   }
 };
