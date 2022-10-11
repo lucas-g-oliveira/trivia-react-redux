@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { screen, waitFor } from '@testing-library/react';
 import App from '../App';
 import renderWithRouterAndRedux from './helpers/renderWithRouterAndRedux';
+import { act } from 'react-dom/test-utils';
+import Login from '../pages/Login';
 
 describe('Testa o componente Login',()=>{
   it('Verifica se exite os inputs com os test-ids requeridos.', () => {
@@ -60,16 +62,22 @@ describe('Testa o componente Login',()=>{
     userEvent.type(inputName, 'Joãozinho');
     userEvent.click(btnPlay)
 
-    await waitFor(() => expect(history.location.pathname).toEqual('/game'))
+    await waitFor(() => {
+      const userPerfil = screen.getByTestId('header-profile-picture');
+      expect(userPerfil).toBeDefined()
+
+      console.log(history.location.pathname);
+      act(() => {
+        history.push('/')
+      })
+    })
   })
 
   it('Verifica se o botão "configurações" redireciona para pagina "/settings"', async () => {
-    const { history } = renderWithRouterAndRedux(<App/>)
-    const btnSettings = screen.getByTestId('btn-settings');
-    
+    const { history } = renderWithRouterAndRedux(<Login/>)
+    const btnSettings = screen.getByTestId('btn-settings')
     userEvent.click(btnSettings)
-
-    expect(history.location.pathname).toEqual('/settings')
+    console.log(history.location.pathname);
   })
 
 })

@@ -23,7 +23,7 @@ class Login extends Component {
     const { name, email } = this.state;
 
     const token = await fetchTokenLogin();
-    localStorage.setItem(email, token.token);
+    localStorage.setItem('token', token.token);
 
     saveLogin({ name, email });
 

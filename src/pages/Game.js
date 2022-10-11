@@ -16,5 +16,5 @@ export default class Game extends Component {
 }
 
 Game.propTypes = {
-  history: PropTypes.objectOf().isRequired,
+  history: PropTypes.shape.isRequired,
 };

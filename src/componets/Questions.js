@@ -29,7 +29,7 @@ class Questions extends React.Component {
     const TOKEN_INVALID = 3;
     let currentAnswersRandomized = [];
     const { infoUser, clearLogin, history } = this.props;
-    const token = localStorage.getItem(infoUser.email);
+    const token = localStorage.getItem('token');
     const questions = await fetchQuestions(token);
     if (questions.response_code === TOKEN_INVALID) {
       localStorage.clear(infoUser);
@@ -113,7 +113,7 @@ Questions.propTypes = {
   infoUser: PropTypes.objectOf(Object).isRequired,
   clearLogin: PropTypes.func.isRequired,
   // setScore: PropTypes.func.isRequired,
-  history: PropTypes.objectOf().isRequired,
+  history: PropTypes.shape.isRequired,
   // score: PropTypes.number.isRequired,
 };
 
