@@ -1,15 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { fetchQuestions } from '../API/fetchApi';
-import { actionLogin, actionScore } from '../Redux/actions';
+import { actionLogin, actionScore, chargeQuestions } from '../Redux/actions';
 
 class Questions extends React.Component {
   state = {
     questions: [],
-    currentQuestionIndex: 6,
     currentAnswersRandomized: [],
+    loading: true,
   };
 
   async componentDidMount() {
@@ -17,22 +16,20 @@ class Questions extends React.Component {
   }
 
   loadingData = async () => {
-    const { infoUser, clearLogin } = this.props;
+    const TOKEN_INVALID = 3;
+    const { infoUser, clearLogin, history } = this.props;
     const token = localStorage.getItem(infoUser.email);
-    if (token === 'INVALID_TOKEN') {
+    const questions = await fetchQuestions(token);
+    if (questions.response_code === TOKEN_INVALID) {
+      console.log('ERRO');
       localStorage.clear(infoUser);
       clearLogin({ name: '', email: '' });
-      (<Redirect to="/" />);
+      history.push('/');
     }
-    const questions = await fetchQuestions(token);
-    this.setState({ questions: questions.results }, () => this.questionOpen());
-  };
-
-  questionOpen = () => {
-    this.setState(
-      { currentQuestionIndex: 0 },
-      () => this.butonsOptions(),
-    );
+    /* chargeStateQuetsions(questions.results); */
+    console.log(questions);
+    this.setState({ questions: questions.results, loading: false });
+    this.butonsOptions();
   };
 
   randomizeArray = (array) => {
@@ -59,59 +56,90 @@ class Questions extends React.Component {
         }));
 
       const newArray = [questionsCorrect, ...questionsIncorrect];
-      const newArrayRandomized = [...this.randomizeArray(newArray)];
-      this.setState({ currentAnswersRandomized: newArrayRandomized });
+      this.setState({ currentAnswersRandomized: newArray });
     }
   };
 
   handlerClick = (event) => {
     const { name } = event.target;
-    const { setScore, score } = this.props;
+    /*  const { setScore, score } = this.props; */
     if (name === 'CorrectAnswer') {
       console.log('Acertou!');
-      setScore({ score: score + 1 });
+      /* setScore({ score: score + 1 }); */
     } else {
       console.log('Erroooooou!');
     }
   };
 
-  renderQuestion = () => {
-    const { questions, currentQuestionIndex, currentAnswersRandomized } = this.state;
-    const currentQuestion = { ...questions[currentQuestionIndex] };
+  // renderQuestion = () => {
+  //   const { questions, currentAnswersRandomized } = this.state;
+  //   const currentQuestion = { ...questions[0] };
 
-    return (
-      <div>
-        <h4 data-testid="question-category">
-          {currentQuestion.category}
-        </h4>
-        <h4 data-testid="question-text">
-          {currentQuestion.question}
-        </h4>
-        <div datatype="answer-options">
-          {currentAnswersRandomized[0]
-            ? currentAnswersRandomized.map((e) => (
-              <button
-                name={ e.status }
-                key={ e.answer }
-                data-testId={ e.testId }
-                type="submit"
-                onClick={ this.handlerClick }
-              >
-                { e.answer }
-              </button>
-            )) : (<h2> Carregando... </h2>)}
-        </div>
-      </div>
-    );
-  };
+  //   return (
+  //     <div>
+  //       <h4 data-testid="question-category">
+  //         {currentQuestion.category}
+  //       </h4>
+  //       <h4 data-testid="question-text">
+  //         {currentQuestion.question}
+  //       </h4>
+  //       <div datatype="answer-options">
+  //         {currentAnswersRandomized[0]
+  //           ? this.randomizeArray(currentAnswersRandomized).map((e) => (
+  //             <button
+  //               name={ e.status }
+  //               key={ e.answer }
+  //               data-testId={ e.testId }
+  //               type="submit"
+  //               onClick={ this.handlerClick }
+  //             >
+  //               { e.answer }
+  //             </button>
+  //           )) : (<h2> Carregando... </h2>)}
+  //       </div>
+  //     </div>
+  //   );
+  // };
 
   render() {
+    const { loading, questions, currentAnswersRandomized } = this.state;
+    console.log(questions);
     return (
-      <div>
-        <div>
-          {this.renderQuestion()}
-        </div>
-      </div>
+    // <div>
+    //   <div>
+    //     {this.renderQuestion()}
+    //   </div>
+    // </div>
+
+      loading ? <p>loading</p>
+        : (<div>
+          test
+          <h4 data-testid="question-category">
+            {questions.category}
+          </h4>
+          <h4 data-testid="question-text">
+            {questions.question}
+          </h4>
+          </ div>),
+          {/* {
+            questions.map(() => (
+              <div datatype="answer-options" key={ Math.random() }>
+                {currentAnswersRandomized[0]
+                  ? this.randomizeArray(currentAnswersRandomized).map((e) => (
+                    <button
+                      name={ e.status }
+                      key={ e.answer }
+                      data-testId={ e.testId }
+                      type="submit"
+                      onClick={ this.handlerClick }
+                    >
+                      { e.answer }
+                    </button>
+                  )) : (<h2> Carregando... </h2>)}
+              </div>
+            ))
+          } */}
+        /* </div> */
     );
   }
 }
@@ -119,18 +147,22 @@ class Questions extends React.Component {
 const mapStateToProps = (state) => ({
   infoUser: state.user,
   score: state.game.score,
+  questionsState: state.game.question,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   clearLogin: (object) => dispatch(actionLogin(object)),
   setScore: (object) => dispatch(actionScore(object)),
+  chargeStateQuetsions: (object) => dispatch(chargeQuestions(object)),
 });
 
 Questions.propTypes = {
   infoUser: PropTypes.objectOf(Object).isRequired,
   clearLogin: PropTypes.func.isRequired,
-  setScore: PropTypes.func.isRequired,
-  score: PropTypes.number.isRequired,
+  // setScore: PropTypes.func.isRequired,
+  /* chargeStateQuetsions: PropTypes.func.isRequired, */
+  history: PropTypes.objectOf().isRequired,
+  // score: PropTypes.number.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Questions);
