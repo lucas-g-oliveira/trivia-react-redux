@@ -12,6 +12,8 @@ class Questions extends React.Component {
     index: 0,
     theAnswerIsCorrect: false,
     rightAnswer: '',
+    time: 30,
+    disable: false,
   };
 
   async componentDidMount() {
@@ -33,12 +35,20 @@ class Questions extends React.Component {
       rightAnswer: question[index].correct_answer });
   };
 
-  handlerClick = () => {
+  handlerClick = ({ target }) => {
+    const { name } = target;
+    const { setScore } = this.props;
+    const { question, index, time } = this.state;
+    const { difficulty } = question[index];
     this.setState({ theAnswerIsCorrect: true });
+    if (name === 'correctAnswer') {
+      setScore(difficulty, time);
+    }
   };
 
   loadingData = async () => {
     const TOKEN_INVALID = 3;
+    const magicNumberTimer = 1000;
     const { infoUser, clearLogin, history } = this.props;
     const token = localStorage.getItem('token');
     const questions = await fetchQuestions(token);
@@ -49,6 +59,15 @@ class Questions extends React.Component {
     }
     this.setState({
       question: questions.results, loading: false }, () => this.createButtons());
+
+    setInterval(() => {
+      const { time } = this.state;
+      if (time > 0) {
+        this.setState({ time: time - 1 });
+      } else {
+        this.setState({ disable: true });
+      }
+    }, magicNumberTimer);
   };
 
   randomizeArray = (array) => {
@@ -62,12 +81,16 @@ class Questions extends React.Component {
 
   render() {
     const { loading, question, currentAnswersRandomized,
-      rightAnswer, theAnswerIsCorrect } = this.state;
-    console.log(currentAnswersRandomized);
+      rightAnswer, theAnswerIsCorrect, time, disable } = this.state;
+    console.log(question);
     return (
       loading ? <p>loading</p>
         : (
           <div>
+            <div>
+              <p>Time:</p>
+              <p>{time}</p>
+            </div>
             <h4 data-testid="question-category">
               {question[0].category}
             </h4>
@@ -81,8 +104,9 @@ class Questions extends React.Component {
                     type="button"
                     key={ Answer }
                     data-testid="correct-answer"
-                    name="CorrectAnswer"
+                    name="correctAnswer"
                     onClick={ this.handlerClick }
+                    disabled={ disable }
                     style={ {
                       border: theAnswerIsCorrect && '3px solid rgb(6, 240, 15)',
                     } }
@@ -94,8 +118,9 @@ class Questions extends React.Component {
                     type="button"
                     key={ Answer }
                     data-testid={ `wrong-answer-${indexWrong}` }
-                    name="CorrectAnswer"
+                    name="wrongAnswer"
                     onClick={ this.handlerClick }
+                    disabled={ disable }
                     style={ {
                       border: theAnswerIsCorrect && '3px solid red',
                     } }
@@ -111,23 +136,17 @@ class Questions extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  infoUser: state.user,
-  score: state.game.score,
-  questionsState: state.game.question,
-});
-
 const mapDispatchToProps = (dispatch) => ({
   clearLogin: (object) => dispatch(actionLogin(object)),
-  setScore: (object) => dispatch(actionScore(object)),
+  setScore: (difficulty, timer) => dispatch(actionScore(difficulty, timer)),
 });
 
 Questions.propTypes = {
   infoUser: PropTypes.objectOf(Object).isRequired,
   clearLogin: PropTypes.func.isRequired,
-  // setScore: PropTypes.func.isRequired,
+  setScore: PropTypes.func.isRequired,
   history: PropTypes.shape.isRequired,
   // score: PropTypes.number.isRequired,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Questions);
+export default connect(null, mapDispatchToProps)(Questions);
