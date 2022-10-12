@@ -7,10 +7,31 @@ export const actionLogin = (payload) => ({
   payload,
 });
 
-export const actionScore = (payload) => ({
-  type: SCORE,
-  payload,
-});
+export const actionScore = (difficulty, timer) => {
+  let score = 0;
+  const dotConstant = 10;
+  const hard = 3;
+  const medium = 2;
+  const easy = 1;
+  switch (difficulty) {
+  case 'hard':
+    score += dotConstant + (timer * hard);
+    break;
+  case 'medium':
+    score += dotConstant + (timer * medium);
+    break;
+  case 'easy':
+    score += dotConstant + (timer * easy);
+    break;
+  default:
+    break;
+  }
+  return ({
+    type: SCORE,
+    payload: score,
+
+  });
+};
 
 export const chargeQuestions = (payload) => ({
   type: CHARGE_QUESTION,

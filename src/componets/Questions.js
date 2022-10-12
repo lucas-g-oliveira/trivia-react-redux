@@ -35,8 +35,15 @@ class Questions extends React.Component {
       rightAnswer: question[index].correct_answer });
   };
 
-  handlerClick = () => {
+  handlerClick = ({ target }) => {
+    const { name } = target;
+    const { setScore } = this.props;
+    const { question, index, time } = this.state;
+    const { difficulty } = question[index];
     this.setState({ theAnswerIsCorrect: true });
+    if (name === 'correctAnswer') {
+      setScore(difficulty, time);
+    }
   };
 
   loadingData = async () => {
@@ -75,7 +82,7 @@ class Questions extends React.Component {
   render() {
     const { loading, question, currentAnswersRandomized,
       rightAnswer, theAnswerIsCorrect, time, disable } = this.state;
-    console.log(currentAnswersRandomized);
+    console.log(question);
     return (
       loading ? <p>loading</p>
         : (
@@ -97,7 +104,7 @@ class Questions extends React.Component {
                     type="button"
                     key={ Answer }
                     data-testid="correct-answer"
-                    name="CorrectAnswer"
+                    name="correctAnswer"
                     onClick={ this.handlerClick }
                     disabled={ disable }
                     style={ {
@@ -111,7 +118,7 @@ class Questions extends React.Component {
                     type="button"
                     key={ Answer }
                     data-testid={ `wrong-answer-${indexWrong}` }
-                    name="CorrectAnswer"
+                    name="wrongAnswer"
                     onClick={ this.handlerClick }
                     disabled={ disable }
                     style={ {
@@ -129,23 +136,17 @@ class Questions extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  infoUser: state.user,
-  score: state.game.score,
-  questionsState: state.game.question,
-});
-
 const mapDispatchToProps = (dispatch) => ({
   clearLogin: (object) => dispatch(actionLogin(object)),
-  setScore: (object) => dispatch(actionScore(object)),
+  setScore: (difficulty, timer) => dispatch(actionScore(difficulty, timer)),
 });
 
 Questions.propTypes = {
   infoUser: PropTypes.objectOf(Object).isRequired,
   clearLogin: PropTypes.func.isRequired,
-  // setScore: PropTypes.func.isRequired,
+  setScore: PropTypes.func.isRequired,
   history: PropTypes.shape.isRequired,
   // score: PropTypes.number.isRequired,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Questions);
+export default connect(null, mapDispatchToProps)(Questions);
