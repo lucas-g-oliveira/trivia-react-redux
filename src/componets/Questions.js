@@ -10,24 +10,35 @@ class Questions extends React.Component {
     currentAnswersRandomized: [],
     loading: true,
     index: 0,
+    theAnswerIsCorrect: false,
+    rightAnswer: '',
   };
 
   async componentDidMount() {
     this.loadingData();
   }
 
-  handlerClick = (event) => {
-    const { name } = event.target;
-    if (name === 'CorrectAnswer') {
-      console.log('Acertou!');
-    } else {
-      console.log('Erroooooou!');
-    }
+  createButtons = () => {
+    const { question, index } = this.state;
+    let currentAnswersRandomized = [];
+    const wrongAnswers = question[index].incorrect_answers;
+    const answers = [
+      question[index].correct_answer,
+      ...wrongAnswers,
+    ];
+
+    currentAnswersRandomized = this.randomizeArray(answers);
+    this.setState({
+      currentAnswersRandomized,
+      rightAnswer: question[index].correct_answer });
+  };
+
+  handlerClick = () => {
+    this.setState({ theAnswerIsCorrect: true });
   };
 
   loadingData = async () => {
     const TOKEN_INVALID = 3;
-    let currentAnswersRandomized = [];
     const { infoUser, clearLogin, history } = this.props;
     const token = localStorage.getItem('token');
     const questions = await fetchQuestions(token);
@@ -37,34 +48,7 @@ class Questions extends React.Component {
       history.push('/');
     }
     this.setState({
-      question: questions.results, loading: false }, () => {
-      const { question, index } = this.state;
-      const wrongAnswers = question[index].incorrect_answers
-        .map((answers, indexWrong) => (
-          <button
-            type="button"
-            key={ answers }
-            data-testid={ `wrong-answer-${indexWrong}` }
-            name="wrongAnswers"
-            onClick={ this.handlerClick }
-          >
-            {answers}
-          </button>));
-      const answers = [
-        <button
-          type="button"
-          key={ question[index].correct_answer }
-          data-testid="correct-answer"
-          name="CorrectAnswer"
-          onClick={ this.handlerClick }
-        >
-          {question[index].correct_answer}
-        </button>,
-        ...wrongAnswers,
-      ];
-      currentAnswersRandomized = this.randomizeArray(answers);
-      this.setState({ currentAnswersRandomized });
-    });
+      question: questions.results, loading: false }, () => this.createButtons());
   };
 
   randomizeArray = (array) => {
@@ -77,7 +61,8 @@ class Questions extends React.Component {
   };
 
   render() {
-    const { loading, question, currentAnswersRandomized } = this.state;
+    const { loading, question, currentAnswersRandomized,
+      rightAnswer, theAnswerIsCorrect } = this.state;
     console.log(currentAnswersRandomized);
     return (
       loading ? <p>loading</p>
@@ -90,7 +75,35 @@ class Questions extends React.Component {
               {question[0].question}
             </h4>
             <div data-testid="answer-options">
-              { currentAnswersRandomized.map((Answer) => Answer) }
+              { currentAnswersRandomized.map((Answer, indexWrong) => (
+                Answer === rightAnswer ? (
+                  <button
+                    type="button"
+                    key={ Answer }
+                    data-testid="correct-answer"
+                    name="CorrectAnswer"
+                    onClick={ this.handlerClick }
+                    style={ {
+                      border: theAnswerIsCorrect && '3px solid rgb(6, 240, 15)',
+                    } }
+                  >
+                    {Answer}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    key={ Answer }
+                    data-testid={ `wrong-answer-${indexWrong}` }
+                    name="CorrectAnswer"
+                    onClick={ this.handlerClick }
+                    style={ {
+                      border: theAnswerIsCorrect && '3px solid red',
+                    } }
+                  >
+                    {Answer}
+                  </button>
+                )
+              )) }
             </div>
           </div>
 
