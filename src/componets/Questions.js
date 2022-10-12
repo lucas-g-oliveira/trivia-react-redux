@@ -12,6 +12,8 @@ class Questions extends React.Component {
     index: 0,
     theAnswerIsCorrect: false,
     rightAnswer: '',
+    time: 30,
+    disable: false,
   };
 
   async componentDidMount() {
@@ -39,6 +41,7 @@ class Questions extends React.Component {
 
   loadingData = async () => {
     const TOKEN_INVALID = 3;
+    const magicNumberTimer = 1000;
     const { infoUser, clearLogin, history } = this.props;
     const token = localStorage.getItem('token');
     const questions = await fetchQuestions(token);
@@ -49,6 +52,15 @@ class Questions extends React.Component {
     }
     this.setState({
       question: questions.results, loading: false }, () => this.createButtons());
+
+    setInterval(() => {
+      const { time } = this.state;
+      if (time > 0) {
+        this.setState({ time: time - 1 });
+      } else {
+        this.setState({ disable: true });
+      }
+    }, magicNumberTimer);
   };
 
   randomizeArray = (array) => {
@@ -62,12 +74,16 @@ class Questions extends React.Component {
 
   render() {
     const { loading, question, currentAnswersRandomized,
-      rightAnswer, theAnswerIsCorrect } = this.state;
+      rightAnswer, theAnswerIsCorrect, time, disable } = this.state;
     console.log(currentAnswersRandomized);
     return (
       loading ? <p>loading</p>
         : (
           <div>
+            <div>
+              <p>Time:</p>
+              <p>{time}</p>
+            </div>
             <h4 data-testid="question-category">
               {question[0].category}
             </h4>
@@ -83,6 +99,7 @@ class Questions extends React.Component {
                     data-testid="correct-answer"
                     name="CorrectAnswer"
                     onClick={ this.handlerClick }
+                    disabled={ disable }
                     style={ {
                       border: theAnswerIsCorrect && '3px solid rgb(6, 240, 15)',
                     } }
@@ -96,6 +113,7 @@ class Questions extends React.Component {
                     data-testid={ `wrong-answer-${indexWrong}` }
                     name="CorrectAnswer"
                     onClick={ this.handlerClick }
+                    disabled={ disable }
                     style={ {
                       border: theAnswerIsCorrect && '3px solid red',
                     } }
