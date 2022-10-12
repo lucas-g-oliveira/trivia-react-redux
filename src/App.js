@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 /* import logo from './trivia.png'; */
 import './App.css';
 import Game from './pages/Game';
@@ -14,11 +14,13 @@ export default class App extends Component {
           <img src={ logo } className="App-logo" alt="logo" />
           <p>SUA VEZ</p>
         </header> */}
-        <Switch>
-          <Route exact path="/" component={ Login } />
-          <Route exact path="/settings" component={ Settings } />
-          <Route exact path="/game" component={ Game } />
-        </Switch>
+        <Router>
+          <Switch>
+            <Route exact path="/" component={ Login } />
+            <Route exact path="/settings" component={ Settings } />
+            <Route exact path="/game" component={ Game } />
+          </Switch>
+        </Router>
       </main>
     );
   }
