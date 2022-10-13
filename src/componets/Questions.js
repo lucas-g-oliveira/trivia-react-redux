@@ -14,6 +14,7 @@ class Questions extends React.Component {
     rightAnswer: '',
     time: 30,
     disable: false,
+    next: false,
   };
 
   async componentDidMount() {
@@ -40,7 +41,7 @@ class Questions extends React.Component {
     const { setScore } = this.props;
     const { question, index, time } = this.state;
     const { difficulty } = question[index];
-    this.setState({ theAnswerIsCorrect: true });
+    this.setState({ theAnswerIsCorrect: true, next: true });
     if (name === 'correctAnswer') {
       setScore(difficulty, time);
     }
@@ -65,7 +66,7 @@ class Questions extends React.Component {
       if (time > 0) {
         this.setState({ time: time - 1 });
       } else {
-        this.setState({ disable: true });
+        this.setState({ disable: true, next: true });
       }
     }, magicNumberTimer);
   };
@@ -79,9 +80,25 @@ class Questions extends React.Component {
     return arr;
   };
 
+  nextClick = () => {
+    const { index } = this.state;
+    const { history } = this.props;
+    const indexNumber = 4;
+    if (index === indexNumber) {
+      history.push('/feedback');
+    } else {
+      this.setState((prevState) => ({
+        index: prevState.index + 1,
+        disable: false,
+        next: false,
+        theAnswerIsCorrect: false,
+      }));
+    }
+  };
+
   render() {
     const { loading, question, currentAnswersRandomized,
-      rightAnswer, theAnswerIsCorrect, time, disable } = this.state;
+      rightAnswer, theAnswerIsCorrect, time, disable, next } = this.state;
     console.log(question);
     return (
       loading ? <p>loading</p>
@@ -130,6 +147,17 @@ class Questions extends React.Component {
                 )
               )) }
             </div>
+            {
+              next && (
+                <button
+                  type="button"
+                  data-testid="btn-next"
+                  onClick={ this.nextClick }
+                >
+                  Next
+                </button>
+              )
+            }
           </div>
 
         ));
