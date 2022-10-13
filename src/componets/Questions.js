@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { fetchQuestions } from '../API/fetchApi';
-import { actionLogin, actionScore } from '../Redux/actions';
+import { actionLogin, actionScore, setCorrectAnswer } from '../Redux/actions';
 
 class Questions extends React.Component {
   state = {
@@ -38,12 +38,13 @@ class Questions extends React.Component {
 
   handlerClick = ({ target }) => {
     const { name } = target;
-    const { setScore } = this.props;
+    const { setScore, setCorrectAnswerScore } = this.props;
     const { question, index, time } = this.state;
     const { difficulty } = question[index];
     this.setState({ theAnswerIsCorrect: true, next: true });
     if (name === 'correctAnswer') {
       setScore(difficulty, time);
+      setCorrectAnswerScore(1);
     }
   };
 
@@ -51,6 +52,7 @@ class Questions extends React.Component {
     const TOKEN_INVALID = 3;
     const magicNumberTimer = 1000;
     const { infoUser, clearLogin, history } = this.props;
+    console.log(infoUser);
     const token = localStorage.getItem('token');
     const questions = await fetchQuestions(token);
     if (questions.response_code === TOKEN_INVALID) {
@@ -168,6 +170,7 @@ class Questions extends React.Component {
 const mapDispatchToProps = (dispatch) => ({
   clearLogin: (object) => dispatch(actionLogin(object)),
   setScore: (difficulty, timer) => dispatch(actionScore(difficulty, timer)),
+  setCorrectAnswerScore: (number) => dispatch(setCorrectAnswer(number)),
 });
 
 Questions.propTypes = {
@@ -175,6 +178,8 @@ Questions.propTypes = {
   clearLogin: PropTypes.func.isRequired,
   setScore: PropTypes.func.isRequired,
   history: PropTypes.shape.isRequired,
+  setCorrectAnswerScore: PropTypes.func.isRequired,
+  // dispatch: PropTypes.func.isRequired,
   // score: PropTypes.number.isRequired,
 };
 

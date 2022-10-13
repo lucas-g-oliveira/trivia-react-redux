@@ -1,6 +1,7 @@
 export const LOGIN = 'LOGIN';
 export const SCORE = 'SCORE';
 export const CHARGE_QUESTION = 'CHARGE_QUESTION';
+export const RIGHT_QUESTION = 'RIGHT_QUESTION';
 
 export const actionLogin = (payload) => ({
   type: LOGIN,
@@ -35,5 +36,10 @@ export const actionScore = (difficulty, timer) => {
 
 export const chargeQuestions = (payload) => ({
   type: CHARGE_QUESTION,
+  payload,
+});
+
+export const setCorrectAnswer = (payload) => ({
+  type: RIGHT_QUESTION,
   payload,
 });

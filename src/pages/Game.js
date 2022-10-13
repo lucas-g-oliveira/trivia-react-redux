@@ -8,7 +8,7 @@ export default class Game extends Component {
     const { history } = this.props;
     return (
       <>
-        <Header />
+        <Header testID="header-score" />
         <Questions history={ history } />
       </>
     );
