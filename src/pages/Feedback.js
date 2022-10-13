@@ -6,7 +6,7 @@ import Header from '../componets/Header';
 class Feedback extends Component {
   render() {
     const referenceScore = 3;
-    const { rightQuestionsGlobal, score } = this.props;
+    const { rightQuestionsGlobal, score, history } = this.props;
     return (
       <div data-testid="feedback-text">
         <Header testID="feedback-total-score" />
@@ -17,13 +17,22 @@ class Feedback extends Component {
           <h2
             data-testid="feedback-total-question"
           >
-            { rightQuestionsGlobal }
+            {rightQuestionsGlobal}
           </h2>
           <h2
             data-testid="header-score"
           >
-            { score }
+            {score}
           </h2>
+        </div>
+        <div>
+          <button
+            data-testid="btn-play-again"
+            type="submit"
+            onClick={ () => history.push('/') }
+          >
+            Play Again
+          </button>
         </div>
       </div>
     );
@@ -33,6 +42,7 @@ class Feedback extends Component {
 Feedback.propTypes = {
   rightQuestionsGlobal: PropTypes.number.isRequired,
   score: PropTypes.number.isRequired,
+  history: PropTypes.shape.isRequired,
 };
 
 const mapStateToProps = (state) => ({

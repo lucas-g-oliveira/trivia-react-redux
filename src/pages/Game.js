@@ -18,3 +18,5 @@ export default class Game extends Component {
 Game.propTypes = {
   history: PropTypes.shape.isRequired,
 };
+
+/* VQV */
