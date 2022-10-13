@@ -11,7 +11,7 @@ function player(state = initialState, action) {
   case SCORE:
     return {
       ...state,
-      score: action.payload,
+      score: state.score + action.payload,
     };
   default:
     return state;
