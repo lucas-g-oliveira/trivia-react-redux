@@ -90,14 +90,15 @@ class Questions extends React.Component {
       this.setState((prevState) => ({
         index: prevState.index + 1,
         disable: false,
+        time: 30,
         next: false,
         theAnswerIsCorrect: false,
-      }));
+      }), () => this.createButtons());
     }
   };
 
   render() {
-    const { loading, question, currentAnswersRandomized,
+    const { loading, question, currentAnswersRandomized, index,
       rightAnswer, theAnswerIsCorrect, time, disable, next } = this.state;
     console.log(question);
     return (
@@ -109,10 +110,10 @@ class Questions extends React.Component {
               <p>{time}</p>
             </div>
             <h4 data-testid="question-category">
-              {question[0].category}
+              {question[index].category}
             </h4>
             <h4 data-testid="question-text">
-              {question[0].question}
+              {question[index].question}
             </h4>
             <div data-testid="answer-options">
               { currentAnswersRandomized.map((Answer, indexWrong) => (
